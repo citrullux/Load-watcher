@@ -8,16 +8,31 @@ using System.Threading.Tasks;
 
 namespace ServerSide
 {
-    class Computer
+    [Serializable]
+    public class Computer
     {
         public Computer()
         {
-            system_type = "Windows";
             power_on = 1;
         }
 
+        [System.ComponentModel.DisplayName("Имя компьютера")]
+        public string machine_name
+        {
+            get
+            {
+                return Environment.MachineName;
+            }
+        }
+
         [System.ComponentModel.DisplayName("Операционная система")]
-        public string system_type { get; set; }
+        public string system_type
+        {
+            get
+            {
+                return Environment.OSVersion.ToString();
+            }
+        }
 
         [System.ComponentModel.DisplayName("Включен")]
         public int power_on { get; set; }
@@ -37,7 +52,7 @@ namespace ServerSide
         }
 
         [System.ComponentModel.DisplayName("Нагрузка на процессор")]
-        public float cpu_load
+        public int cpu_load
         {
             get
             {
@@ -48,10 +63,11 @@ namespace ServerSide
                     // В чём проблема? Тут просто не было обновления если не поставить Wait
                     // ну правда, там было либо 0 либо 100... Теперь же работает.
                     Thread.Sleep(500);
-                    return cpu_counter.NextValue();
+                    return (int)cpu_counter.NextValue();
                 }
             }
         }
+
 
         [System.ComponentModel.DisplayName("Свободно памяти")]
         public float ram_load
@@ -65,5 +81,8 @@ namespace ServerSide
                 }
             }
         }
+
+
     }
+
 }
