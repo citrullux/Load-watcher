@@ -23,7 +23,7 @@ namespace Load_watcher
         public List<TcpClient> tcpClients;
         private BindingList<Info> list;
         public TcpListener server;
-        public IPAddress ipAddr = IPAddress.Parse("127.0.0.1");
+        public IPAddress ipAddr = IPAddress.Parse("0.0.0.0");
         public ClientList()
         {
             InitializeComponent();

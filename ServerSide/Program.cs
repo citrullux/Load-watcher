@@ -14,19 +14,15 @@ namespace ServerSide
 {
     class Program
     {
-        static string serverIP = "127.0.0.1";
-
-        static NetworkStream Connect()
+        static NetworkStream Connect(string ip, int port)
         {
             TcpClient newClient = new TcpClient();
-            // Присоединяемся к "клиенту"
-            // Клиент - тот кто принимает данные
-            // и ведёт статистику
             while (!newClient.Connected)
             {
+                Console.WriteLine("Connecting to {0}:{1}...", ip, port);
                 try
                 {
-                    newClient.Connect(serverIP, 4254);
+                    newClient.Connect(ip, port);
                 }
                 catch
                 {
@@ -34,26 +30,34 @@ namespace ServerSide
                 }
                 Thread.Sleep(5000);
             }
+            Console.WriteLine("Connected!");
             return newClient.GetStream();
         }
  
         static void Main(string[] args)
         {
-            NetworkStream netStream = Connect();
+            string serverIP = "127.0.0.1";
+            int serverPort = 4254;
+            if (args.Length == 2)
+            {
+                serverIP = args[0];
+                serverPort = Int32.Parse(args[1]);
+            }
+            NetworkStream netStream = Connect(serverIP, serverPort);
             var cpu = new PerformanceCounter("Processor", "% Processor Time", "_Total");
             var uptime = new PerformanceCounter("System", "System Up Time");
             var ram = new PerformanceCounter("Memory", "Available MBytes");
             cpu.NextValue();
             uptime.NextValue();
             ram.NextValue();
+
+            var thisPC = new Info();
+            thisPC.MachineName = Environment.MachineName;
+            thisPC.SystemType = Environment.OSVersion.VersionString;
             // А потом повторяем
             while (true)
             {
-                // Обновляем поле
-                var thisPC = new Info();
-                thisPC.MachineName = "localhost";
-                thisPC.SystemType = "Windows";
-
+                // Обновляем поля
                 thisPC.Uptime = TimeSpan.FromSeconds(uptime.NextValue()).ToString(@"%d' д. 'hh\:mm\:ss");
                 thisPC.CpuLoad = (int)cpu.NextValue();
                 thisPC.RamLoad = (int)ram.NextValue();
@@ -75,7 +79,7 @@ namespace ServerSide
                     }
                     catch
                     {
-                        netStream = Connect();
+                        netStream = Connect(serverIP, serverPort);
                     }
                 }
 
