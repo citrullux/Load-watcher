@@ -1,4 +1,4 @@
-﻿namespace ClientSide
+﻿namespace Load_watcher
 {
     partial class ClientList
     {
@@ -37,15 +37,13 @@
             // Update_timer
             // 
             this.Update_timer.Enabled = true;
-            this.Update_timer.Interval = 1000;
+            this.Update_timer.Interval = 250;
             this.Update_timer.Tick += new System.EventHandler(this.Update_timer_Tick);
             // 
             // grid
             // 
-            this.grid.BackgroundColor = System.Drawing.SystemColors.ButtonFace;
             this.grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid.GridColor = System.Drawing.SystemColors.ActiveBorder;
             this.grid.Location = new System.Drawing.Point(0, 0);
             this.grid.Name = "grid";
             this.grid.Size = new System.Drawing.Size(784, 442);

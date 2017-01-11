@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClientSide.Properties
+namespace Load_watcher.Properties
 {
 
 

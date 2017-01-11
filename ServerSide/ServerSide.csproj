@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8D8A4E6B-BB4E-4B67-B0F6-144EC7D08479}</ProjectGuid>
+    <ProjectGuid>{1DC944C1-ED6D-40C9-89E4-E7C81144ED03}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>ServerSide</RootNamespace>
     <AssemblyName>ServerSide</AssemblyName>
@@ -42,12 +42,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Computer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Computer\Computer.csproj">
+      <Project>{5cfd0771-84db-494d-84a6-9dedab7cf580}</Project>
+      <Name>Computer</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

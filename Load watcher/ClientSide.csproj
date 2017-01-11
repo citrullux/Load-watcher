@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{618735CF-F02B-428E-8626-5A1D3246ACDF}</ProjectGuid>
+    <ProjectGuid>{E0EDBA53-4E3D-4C9E-99CA-7BA9BFC48135}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>ClientSide</RootNamespace>
-    <AssemblyName>ClientSide</AssemblyName>
+    <RootNamespace>Load_watcher</RootNamespace>
+    <AssemblyName>Load watcher</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -31,9 +31,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <NoWin32Manifest>true</NoWin32Manifest>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -54,8 +51,6 @@
     <Compile Include="ClientList.Designer.cs">
       <DependentUpon>ClientList.cs</DependentUpon>
     </Compile>
-    <Compile Include="Computer.cs" />
-    <Compile Include="Microsoft\VisualBasic\Devices.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="ClientList.resx">
@@ -82,6 +77,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Computer\Computer.csproj">
+      <Project>{5cfd0771-84db-494d-84a6-9dedab7cf580}</Project>
+      <Name>Computer</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
