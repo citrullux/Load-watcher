@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Computer;
+using System.Runtime.Serialization.Json;
 
 namespace Load_watcher
 {
@@ -20,6 +21,7 @@ namespace Load_watcher
         // This integer variable keeps track of the 
         // remaining time.
         int timeLeft;
+        public DataContractJsonSerializer ser;
         public List<TcpClient> tcpClients;
         private BindingList<Info> list;
         public TcpListener server;
@@ -32,6 +34,7 @@ namespace Load_watcher
             grid.DataSource = list;
             tcpClients = new List<TcpClient>();
             server = new TcpListener(ipAddr, 4254);
+            ser = new DataContractJsonSerializer(typeof(Info));
             //NetworkStream In_stream = server.AcceptTcpClient
             server.Start();
         }
@@ -64,7 +67,6 @@ namespace Load_watcher
                             tcpClients.Remove(client);
                             continue;
                         }
-                        var formatter = new BinaryFormatter();
                         byte[] buf = new byte[4];
                         try
                         {
@@ -84,9 +86,14 @@ namespace Load_watcher
                         {
                             continue;
                         }
-                        var ms = new MemoryStream(bytes);
-                        var remoteComputer = (Info)formatter.Deserialize(ms);
-                        list.Add(remoteComputer);
+                        if (bytes.Length > 0)
+                        {
+                            var ms = new MemoryStream(bytes);
+
+                            var remoteComputer = (Info)ser.ReadObject(ms);
+                            remoteComputer.Uptime = TimeSpan.FromSeconds(Double.Parse(remoteComputer.Uptime)).ToString(@"%d' д 'hh\:mm\:ss");
+                            list.Add(remoteComputer);
+                        }
 
                     }
                 }

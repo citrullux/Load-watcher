@@ -51,16 +51,32 @@ namespace ServerSide
             uptime.NextValue();
             ram.NextValue();
 
-            var thisPC = new Info();
-            thisPC.MachineName = Environment.MachineName;
-            thisPC.SystemType = Environment.OSVersion.VersionString;
+            //var thisPC = new Info();
+            //thisPC.MachineName = Environment.MachineName;
+            //thisPC.SystemType = Environment.OSVersion.VersionString;
+
+            
+            
+
             // А потом повторяем
             while (true)
             {
                 // Обновляем поля
-                thisPC.Uptime = TimeSpan.FromSeconds(uptime.NextValue()).ToString(@"%d' д. 'hh\:mm\:ss");
-                thisPC.CpuLoad = (int)cpu.NextValue();
-                thisPC.RamLoad = (int)ram.NextValue();
+                //thisPC.Uptime = TimeSpan.FromSeconds(uptime.NextValue()).ToString(@"%d' д. 'hh\:mm\:ss");
+                //thisPC.CpuLoad = (int)cpu.NextValue();
+                //thisPC.RamLoad = (int)ram.NextValue();
+
+                // Приводим к общему формату(Кроссплатформенность!)
+
+                string[] many = { "{", "\"<MachineName>k__BackingField\"", ":\"", Environment.MachineName.ToString(), "\",",
+                    "\"<SystemType>k__BackingField\"", ":\"", Environment.OSVersion.VersionString, "\",",
+                    "\"<Uptime>k__BackingField\"", ":\"", uptime.NextValue().ToString(),"\",",
+                    "\"<CpuLoad>k__BackingField\"", ":\"", ((int)cpu.NextValue()).ToString(), "\",",
+                    "\"<RamLoad>k__BackingField\"", ":\"", ((int)ram.NextValue()).ToString(), "\"}"
+                };
+
+                string thisPC = string.Concat(many);
+                //Console.WriteLine(thisPC);
 
                 //Console.WriteLine(This_pc.cpu_load);
                 //byte[] data = This_pc.power_on.GetBytes();
@@ -68,9 +84,8 @@ namespace ServerSide
                 using (var memoryStream = new MemoryStream())
                 {
                     // Переделываем в формат для передачи по сети
-                    var formatter = new BinaryFormatter();
-                    formatter.Serialize(memoryStream, thisPC);
-                    var bytes = memoryStream.ToArray();
+                    
+                    var bytes = new MemoryStream(Encoding.UTF8.GetBytes(thisPC ?? "")).ToArray();
                     // Передаём
                     try
                     {
@@ -83,7 +98,7 @@ namespace ServerSide
                     }
                 }
 
-                Thread.Sleep(500);
+                Thread.Sleep(1000);
             }
         }
     }
