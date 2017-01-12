@@ -3,14 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26014.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientSide", "Load watcher\ClientSide.csproj", "{E0EDBA53-4E3D-4C9E-99CA-7BA9BFC48135}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerApp", "Load watcher\ServerApp.csproj", "{E0EDBA53-4E3D-4C9E-99CA-7BA9BFC48135}"
 	ProjectSection(ProjectDependencies) = postProject
 		{5CFD0771-84DB-494D-84A6-9DEDAB7CF580} = {5CFD0771-84DB-494D-84A6-9DEDAB7CF580}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Computer", "Computer\Computer.csproj", "{5CFD0771-84DB-494D-84A6-9DEDAB7CF580}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerSide", "ServerSide\ServerSide.csproj", "{1DC944C1-ED6D-40C9-89E4-E7C81144ED03}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientApp", "ServerSide\ClientApp.csproj", "{1DC944C1-ED6D-40C9-89E4-E7C81144ED03}"
 	ProjectSection(ProjectDependencies) = postProject
 		{5CFD0771-84DB-494D-84A6-9DEDAB7CF580} = {5CFD0771-84DB-494D-84A6-9DEDAB7CF580}
 	EndProjectSection

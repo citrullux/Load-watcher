@@ -1,4 +1,4 @@
-﻿namespace Load_watcher
+﻿namespace ServerApp
 {
     partial class ClientList
     {
