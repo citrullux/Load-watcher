@@ -7,6 +7,10 @@ using System.Net.Sockets;
 using System.Windows.Forms;
 using Computer;
 using System.Runtime.Serialization.Json;
+using OpenSSL.SSL;
+using OpenSSL.Crypto;
+using OpenSSL.Core;
+using System.Text;
 
 namespace ServerApp
 {
@@ -19,7 +23,10 @@ namespace ServerApp
         public List<TcpClient> tcpClients;
         private BindingList<Info> list;
         public TcpListener server;
+        //public RSA rsa;
         public IPAddress ipAddr = IPAddress.Parse("0.0.0.0");
+        public static RSA rsa = new RSA();
+        public static BIO bio;
         public ClientList()
         {
             InitializeComponent();
@@ -31,10 +38,13 @@ namespace ServerApp
             ser = new DataContractJsonSerializer(typeof(Info));
             //NetworkStream In_stream = server.AcceptTcpClient
             server.Start();
+            rsa.GenerateKeys(2048, 3, null, null);
+            rsa.WritePublicKey(bio);
         }
 
         private void Update_timer_Tick(object sender, EventArgs e)
         {
+
             if (timeLeft > 0)
             {
                 // Display the new time left
@@ -45,7 +55,13 @@ namespace ServerApp
             {
                 while (server.Pending())
                 {
-                    tcpClients.Add(server.AcceptTcpClient());
+                    var client = server.AcceptTcpClient();
+                    tcpClients.Add(client);
+                    // Отправка публичного ключа
+                    var netStream = client.GetStream();
+                    var bioBytes = Encoding.ASCII.GetBytes(bio.ToString());
+                    netStream.Write(BitConverter.GetBytes(bioBytes.Length), 0, 4);
+                    netStream.Write(bioBytes, 0, bioBytes.Length);
                 }
                 // If the user ran out of time, stop the timer, show
                 // a MessageBox, and fill in the answers.

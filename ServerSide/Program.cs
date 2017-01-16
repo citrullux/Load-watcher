@@ -4,13 +4,22 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Diagnostics;
+using OpenSSL.SSL;
+using OpenSSL.Crypto;
+using OpenSSL.Core;
+
 
 namespace ClientApp
 {
     class Program
     {
+        public static RSA rsa = new RSA();
+        public static BIO bio;
+        public static PasswordHandler pass;
+        
         static NetworkStream Connect(string ip, int port)
         {
+            
             TcpClient newClient = new TcpClient();
             while (!newClient.Connected)
             {
@@ -31,6 +40,9 @@ namespace ClientApp
  
         static void Main(string[] args)
         {
+            rsa.GenerateKeys(2048, 3, null, null);
+            rsa.WritePublicKey(bio);
+
             string serverIP = "127.0.0.1";
             int serverPort = 4254;
             if (args.Length == 2)
@@ -39,6 +51,9 @@ namespace ClientApp
                 serverPort = Int32.Parse(args[1]);
             }
             NetworkStream netStream = Connect(serverIP, serverPort);
+            
+           
+
             var cpu = new PerformanceCounter("Processor", "% Processor Time", "_Total");
             var uptime = new PerformanceCounter("System", "System Up Time");
             var ram = new PerformanceCounter("Memory", "Available MBytes");
@@ -49,9 +64,6 @@ namespace ClientApp
             //var thisPC = new Info();
             //thisPC.MachineName = Environment.MachineName;
             //thisPC.SystemType = Environment.OSVersion.VersionString;
-
-            
-            
 
             // А потом повторяем
             while (true)
