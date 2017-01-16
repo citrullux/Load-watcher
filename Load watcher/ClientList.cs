@@ -23,10 +23,11 @@ namespace ServerApp
         public List<TcpClient> tcpClients;
         private BindingList<Info> list;
         public TcpListener server;
-        //public RSA rsa;
+        //public RSA RSA;
         public IPAddress ipAddr = IPAddress.Parse("0.0.0.0");
-        public static RSA rsa = new RSA();
-        public static BIO bio;
+        public RSA rsa = new RSA();
+        public const int len = 2048;
+        public BIO bio = new BIO(new byte[2*len]);
         public ClientList()
         {
             InitializeComponent();
@@ -38,8 +39,7 @@ namespace ServerApp
             ser = new DataContractJsonSerializer(typeof(Info));
             //NetworkStream In_stream = server.AcceptTcpClient
             server.Start();
-            rsa.GenerateKeys(2048, 3, null, null);
-            rsa.WritePublicKey(bio);
+            rsa.GenerateKeys(len, 3, null, null);
         }
 
         private void Update_timer_Tick(object sender, EventArgs e)
@@ -59,9 +59,9 @@ namespace ServerApp
                     tcpClients.Add(client);
                     // Отправка публичного ключа
                     var netStream = client.GetStream();
-                    var bioBytes = Encoding.ASCII.GetBytes(bio.ToString());
-                    netStream.Write(BitConverter.GetBytes(bioBytes.Length), 0, 4);
-                    netStream.Write(bioBytes, 0, bioBytes.Length);
+                    var keyBytes = Encoding.ASCII.GetBytes(rsa.PublicKeyAsPEM);
+                    netStream.Write(BitConverter.GetBytes(keyBytes.Length), 0, 4);
+                    netStream.Write(keyBytes, 0, keyBytes.Length);
                 }
                 // If the user ran out of time, stop the timer, show
                 // a MessageBox, and fill in the answers.
@@ -98,7 +98,8 @@ namespace ServerApp
                         }
                         if (bytes.Length > 0)
                         {
-                            var ms = new MemoryStream(bytes);
+                            var bytesDecryped = rsa.PrivateDecrypt(bytes, RSA.Padding.PKCS1);
+                            var ms = new MemoryStream(bytesDecryped);
 
                             var remoteComputer = (Info)ser.ReadObject(ms);
                             remoteComputer.Uptime = TimeSpan.FromSeconds(Double.Parse(remoteComputer.Uptime)).ToString(@"%d' д 'hh\:mm\:ss");

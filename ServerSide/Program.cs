@@ -13,8 +13,9 @@ namespace ClientApp
 {
     class Program
     {
-        public static RSA rsa = new RSA();
-        public static BIO bio;
+        public static RSA rsa;
+        public static int len = 2048;
+        public static BIO bio = new BIO(new byte[len]);
         public static PasswordHandler pass;
         
         static NetworkStream Connect(string ip, int port)
@@ -40,8 +41,6 @@ namespace ClientApp
  
         static void Main(string[] args)
         {
-            rsa.GenerateKeys(2048, 3, null, null);
-            rsa.WritePublicKey(bio);
 
             string serverIP = "127.0.0.1";
             int serverPort = 4254;
@@ -50,9 +49,34 @@ namespace ClientApp
                 serverIP = args[0];
                 serverPort = Int32.Parse(args[1]);
             }
+
             NetworkStream netStream = Connect(serverIP, serverPort);
             
-           
+            // Передача открытого ключа от сервера
+            byte[] buf = new byte[4];
+            try
+            {
+                netStream.Read(buf, 0, 4);
+            }
+            catch
+            {
+                Console.WriteLine("Key size missing.");
+            }
+            var size = BitConverter.ToInt32(buf, 0);
+            var serverKey = new byte[size];
+            try
+            {
+                netStream.Read(serverKey, 0, serverKey.Length);
+            }
+            catch
+            {
+                Console.WriteLine("Key missing.");
+            }
+            BIO pubkey = new BIO(serverKey);
+            rsa = RSA.FromPublicKey(pubkey);
+            // А достаточно нам его будет, так как мы только отправляем информацию
+            // соответственно сервер должен будет пользоваться только своим закрытым ключом.
+
 
             var cpu = new PerformanceCounter("Processor", "% Processor Time", "_Total");
             var uptime = new PerformanceCounter("System", "System Up Time");
@@ -93,11 +117,12 @@ namespace ClientApp
                     // Переделываем в формат для передачи по сети
                     
                     var bytes = new MemoryStream(Encoding.UTF8.GetBytes(thisPC ?? "")).ToArray();
+                    var crypedBytes = rsa.PublicEncrypt(bytes, RSA.Padding.PKCS1);
                     // Передаём
                     try
                     {
-                        netStream.Write(BitConverter.GetBytes(bytes.Length), 0, 4);
-                        netStream.Write(bytes, 0, bytes.Length);
+                        netStream.Write(BitConverter.GetBytes(crypedBytes.Length), 0, 4);
+                        netStream.Write(crypedBytes, 0, crypedBytes.Length);
                     }
                     catch
                     {
