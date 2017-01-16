@@ -54,6 +54,10 @@
       <Project>{5cfd0771-84db-494d-84a6-9dedab7cf580}</Project>
       <Name>Computer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\openssl-net-master\ManagedOpenSsl\ManagedOpenSsl.csproj">
+      <Project>{73dcc218-655b-485f-8eac-0ce5f2f7343d}</Project>
+      <Name>ManagedOpenSsl</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
