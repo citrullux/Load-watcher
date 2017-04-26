@@ -26,7 +26,7 @@ namespace ServerApp
         //public RSA RSA;
         public IPAddress ipAddr = IPAddress.Parse("0.0.0.0");
         public RSA rsa = new RSA();
-        public const int len = 2048;
+        public const int len = 4096;
         public BIO bio = new BIO(new byte[2*len]);
         public ClientList()
         {

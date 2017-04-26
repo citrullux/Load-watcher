@@ -7,14 +7,15 @@ using System.Diagnostics;
 using OpenSSL.SSL;
 using OpenSSL.Crypto;
 using OpenSSL.Core;
-
+using System.Management;
+using System.Collections.Generic;
 
 namespace ClientApp
 {
     class Program
     {
         public static RSA rsa;
-        public static int len = 2048;
+        public static int len = 4096;
         public static BIO bio = new BIO(new byte[len]);
         public static PasswordHandler pass;
         
@@ -38,7 +39,28 @@ namespace ClientApp
             Console.WriteLine("Connected!");
             return newClient.GetStream();
         }
- 
+
+        public static string GetHardwareInfo(string WIN32_Class, string ClassItemField)
+        {
+            List<string> result = new List<string>();
+
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM " + WIN32_Class);
+
+            try
+            {
+                foreach (ManagementObject obj in searcher.Get())
+                {
+                    result.Add(obj[ClassItemField].ToString().Trim());
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return result.ToString();
+        }
+
         static void Main(string[] args)
         {
 
@@ -85,6 +107,26 @@ namespace ClientApp
             uptime.NextValue();
             ram.NextValue();
 
+
+            //var manufacter = new PerformanceCounter("Processor", "Name");
+            //manufacter.NextValue();
+            //var cpuname = new PerformanceCounter("Processor", "Name");
+            //cpuname.NextValue();
+            string cpuname = "";
+            string manufacter = "";
+
+
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM " + "Win32_Processor");
+            foreach (ManagementObject obj in searcher.Get())
+            {
+                cpuname = obj["Name"].ToString().Trim();
+                manufacter = obj["Manufacturer"].ToString().Trim();
+            }
+            
+            //var cpuname = GetHardwareInfo("Win32_Processor", "Name");
+            //var manufacter = GetHardwareInfo("Win32_Processor", "Manufacturer");
+
+
             //var thisPC = new Info();
             //thisPC.MachineName = Environment.MachineName;
             //thisPC.SystemType = Environment.OSVersion.VersionString;
@@ -100,6 +142,8 @@ namespace ClientApp
                 // Приводим к общему формату(Кроссплатформенность!)
 
                 string[] many = { "{", "\"<MachineName>k__BackingField\"", ":\"", Environment.MachineName.ToString(), "\",",
+                    "\"<VendorId>k__BackingField\"", ":\"", manufacter.ToString(), "\",",
+                    "\"<ModelName>k__BackingField\"", ":\"", cpuname.ToString(), "\",",
                     "\"<SystemType>k__BackingField\"", ":\"", Environment.OSVersion.VersionString, "\",",
                     "\"<Uptime>k__BackingField\"", ":\"", uptime.NextValue().ToString(),"\",",
                     "\"<CpuLoad>k__BackingField\"", ":\"", ((int)cpu.NextValue()).ToString(), "\",",
@@ -133,5 +177,9 @@ namespace ClientApp
                 Thread.Sleep(1000);
             }
         }
+
+
     }
+
+
 }
