@@ -161,7 +161,7 @@ namespace ClientApp
                     // Переделываем в формат для передачи по сети
                     
                     var bytes = new MemoryStream(Encoding.UTF8.GetBytes(thisPC ?? "")).ToArray();
-                    var crypedBytes = rsa.PublicEncrypt(bytes, RSA.Padding.PKCS1);
+                    var crypedBytes = rsa.PublicEncrypt(bytes, RSA.Padding.OAEP);
                     // Передаём
                     try
                     {

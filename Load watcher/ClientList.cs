@@ -61,6 +61,9 @@ namespace ServerApp
                     var netStream = client.GetStream();
                     var keyBytes = Encoding.ASCII.GetBytes(rsa.PublicKeyAsPEM);
                     netStream.Write(BitConverter.GetBytes(keyBytes.Length), 0, 4);
+                    // Отладка
+                    //MessageBox.Show(keyBytes.Length.ToString());
+
                     netStream.Write(keyBytes, 0, keyBytes.Length);
                 }
                 // If the user ran out of time, stop the timer, show
@@ -86,7 +89,10 @@ namespace ServerApp
                         {
                             continue;
                         }
+                        
                         var size = BitConverter.ToInt32(buf, 0);
+                        //MessageBox.Show(size.ToString());
+                        
                         var bytes = new byte[size];
                         try
                         {
@@ -96,15 +102,18 @@ namespace ServerApp
                         {
                             continue;
                         }
+                        //MessageBox.Show(bytes.ToString());
+                        
                         if (bytes.Length > 0)
                         {
-                            var bytesDecryped = rsa.PrivateDecrypt(bytes, RSA.Padding.PKCS1);
+                            var bytesDecryped = rsa.PrivateDecrypt(bytes, RSA.Padding.OAEP);
                             var ms = new MemoryStream(bytesDecryped);
 
                             var remoteComputer = (Info)ser.ReadObject(ms);
                             remoteComputer.Uptime = TimeSpan.FromSeconds(Double.Parse(remoteComputer.Uptime)).ToString(@"%d' д 'hh\:mm\:ss");
                             list.Add(remoteComputer);
                         }
+                        
 
                     }
                 }
